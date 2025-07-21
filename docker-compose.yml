@@ -1,0 +1,17 @@
+services:
+  visitflow-db:
+    container_name: visitflow-db
+    image: postgres:latest
+    restart: always
+    volumes:
+      - visitflow-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: visitflow
+    ports:
+      - 5432:5432
+
+volumes:
+  visitflow-db-data:
+    driver: local
