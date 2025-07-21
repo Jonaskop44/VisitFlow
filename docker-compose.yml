@@ -11,6 +11,22 @@ services:
       POSTGRES_DB: visitflow
     ports:
       - 5432:5432
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.1
+    container_name: keycloak
+    command: start-dev
+    restart: always
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://visitflow-db:5432/visitflow
+      KC_DB_USERNAME: postgresql
+      KC_DB_PASSWORD: mysecretpassword
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    depends_on:
+      - visitflow-db
 
 volumes:
   visitflow-db-data:
