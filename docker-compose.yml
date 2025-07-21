@@ -6,7 +6,7 @@ services:
     volumes:
       - visitflow-db-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: postgresql
       POSTGRES_PASSWORD: mysecretpassword
       POSTGRES_DB: visitflow
     ports:

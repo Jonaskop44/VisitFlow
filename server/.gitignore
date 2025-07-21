@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# env files (can opt-in for committing if needed)
+.env
+
 ### STS ###
 .apt_generated
 .classpath
