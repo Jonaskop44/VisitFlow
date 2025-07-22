@@ -5,32 +5,34 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.OffsetDateTime;
-import java.util.List;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "users")
+@Table(name = "customers")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public final class User {
+public final class Customer {
 
     @Id
-    @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String username;
+    private String firstName;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
+    private String lastName;
+
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
-    private String password;
+    private String phoneNumber;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -40,7 +42,11 @@ public final class User {
     @Column(nullable = false)
     private OffsetDateTime updatedAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Customer> customers;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Visit visit;
 
 }
