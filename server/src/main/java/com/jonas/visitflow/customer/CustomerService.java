@@ -3,6 +3,8 @@ package com.jonas.visitflow.customer;
 
 import com.jonas.visitflow.customer.dto.CreateCustomerDto;
 import com.jonas.visitflow.customer.dto.CustomerDto;
+import com.jonas.visitflow.exception.NotFoundException;
+import com.jonas.visitflow.exception.UnauthorizedException;
 import com.jonas.visitflow.model.Customer;
 import com.jonas.visitflow.repository.CustomerRepository;
 import jakarta.validation.Valid;
@@ -38,10 +40,10 @@ public class CustomerService {
 
     public CustomerDto updateCustomer(Long id, CreateCustomerDto customerDto, String userId) {
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new NotFoundException("Customer with id " + id + " not found"));
 
         if (!customer.getUserId().equals(userId)) {
-            throw new RuntimeException("Unauthorized to update this customer");
+            throw new UnauthorizedException("Unauthorized to update this customer");
         }
 
         customer.setFirstName(customerDto.getFirstName());
@@ -55,10 +57,10 @@ public class CustomerService {
 
     public void deleteCustomer(Long id, String userId) {
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new NotFoundException("Customer with id " + id + " not found"));
 
         if (!customer.getUserId().equals(userId)) {
-            throw new RuntimeException("Unauthorized to delete this customer");
+            throw new UnauthorizedException("Unauthorized to delete this customer");
         }
 
         customerRepository.delete(customer);
