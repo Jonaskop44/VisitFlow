@@ -10,29 +10,29 @@ import java.time.LocalDateTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "addresses")
+@Table(name = "companies")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public final class Address {
+public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String street;
+    @Column(nullable = false, unique = true)
+    private String name;
 
-    @Column(nullable = false)
-    private String city;
+    @Column(nullable = true)
+    private String description;
 
-    @Column(nullable = false)
-    private String postalCode;
+    @Column(nullable = true, unique = true)
+    private String domain;
 
-    @Column(nullable = false)
-    private String country;
+    @Column(nullable = false, unique = true)
+    private String userId;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -42,7 +42,8 @@ public final class Address {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToOne(mappedBy = "address")
-    private Visit visit;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
+    private  Address address;
 
 }
