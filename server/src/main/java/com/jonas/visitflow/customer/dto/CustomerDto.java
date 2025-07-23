@@ -4,6 +4,8 @@ import com.jonas.visitflow.model.Customer;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 public class CustomerDto {
@@ -12,6 +14,9 @@ public class CustomerDto {
     private String lastName;
     private String email;
     private String phoneNumber;
+    private String userId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public static CustomerDto fromEntity(Customer customer) {
 
@@ -21,6 +26,9 @@ public class CustomerDto {
                 .lastName(customer.getLastName())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
+                .userId(customer.getUserId())
+                .createdAt(customer.getCreatedAt())
+                .updatedAt(customer.getUpdatedAt())
                 .build();
     }
 }

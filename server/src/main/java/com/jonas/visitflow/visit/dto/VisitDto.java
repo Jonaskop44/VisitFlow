@@ -1,5 +1,6 @@
 package com.jonas.visitflow.visit.dto;
 
+import com.jonas.visitflow.address.dto.AddressDto;
 import com.jonas.visitflow.model.Visit;
 import lombok.Builder;
 import lombok.Data;
@@ -10,24 +11,22 @@ import java.time.LocalDateTime;
 @Builder
 public class VisitDto {
     private Long id;
-    private Long customerId;
-    private String street;
-    private String city;
-    private String postalCode;
-    private String country;
     private LocalDateTime requestedDateTime;
     private String note;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private Long customerId;
+    private AddressDto address;
 
     public static VisitDto fromEntity(Visit visit) {
         return VisitDto.builder()
                 .id(visit.getId())
-                .customerId(visit.getCustomer().getId())
-                .street(visit.getAddress().getStreet())
-                .city(visit.getAddress().getCity())
-                .postalCode(visit.getAddress().getPostalCode())
-                .country(visit.getAddress().getCountry())
                 .requestedDateTime(visit.getRequestedDateTime())
                 .note(visit.getNote())
+                .createdAt(visit.getCreatedAt())
+                .updatedAt(visit.getUpdatedAt())
+                .customerId(visit.getCustomer().getId())
+                .address(AddressDto.fromEntity(visit.getAddress()))
                 .build();
     }
 }

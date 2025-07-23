@@ -1,5 +1,6 @@
 package com.jonas.visitflow.visit;
 
+import com.jonas.visitflow.company.dto.CompanyDto;
 import com.jonas.visitflow.visit.dto.CreateVisitDto;
 import com.jonas.visitflow.visit.dto.VisitDto;
 import com.jonas.visitflow.visit.dto.VisitLinkDto;

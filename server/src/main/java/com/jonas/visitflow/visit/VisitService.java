@@ -1,12 +1,10 @@
 package com.jonas.visitflow.visit;
 
+import com.jonas.visitflow.company.dto.CompanyDto;
 import com.jonas.visitflow.exception.LinkAlreadyUsedException;
 import com.jonas.visitflow.exception.NotFoundException;
-import com.jonas.visitflow.model.Address;
-import com.jonas.visitflow.model.Customer;
-import com.jonas.visitflow.model.Visit;
-import com.jonas.visitflow.model.VisitLink;
-import com.jonas.visitflow.repository.AddressRepository;
+import com.jonas.visitflow.model.*;
+import com.jonas.visitflow.repository.CompanyRepository;
 import com.jonas.visitflow.repository.CustomerRepository;
 import com.jonas.visitflow.repository.VisitLinkRepository;
 import com.jonas.visitflow.repository.VisitRepository;
@@ -26,7 +24,7 @@ public class VisitService {
     private final VisitLinkRepository visitLinkRepository;
     private final VisitRepository visitRepository;
     private final CustomerRepository customerRepository;
-    private final AddressRepository addressRepository;
+    private final CompanyRepository companyRepository;
 
     public VisitLinkDto createVisitLink(String userId) {
         VisitLink visitLink = VisitLink.builder()
@@ -40,7 +38,7 @@ public class VisitService {
         VisitLink visitLink = visitLinkRepository.findByToken(token).orElseThrow(() -> new NotFoundException("Invalid or expired visit link"));
 
         // Validate that the visit link is not expired
-        if(visitLink.isUsed() || visitLink.getExpiresAt().isBefore(LocalDateTime.now())) {
+        if (visitLink.isUsed() || visitLink.getExpiresAt().isBefore(LocalDateTime.now())) {
             throw new LinkAlreadyUsedException("Invalid or expired visit link");
         }
 

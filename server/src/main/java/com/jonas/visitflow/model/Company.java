@@ -31,7 +31,7 @@ public class Company {
     @Column(nullable = true, unique = true)
     private String domain;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String userId;
 
     @CreatedDate
