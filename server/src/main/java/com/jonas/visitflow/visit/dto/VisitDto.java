@@ -17,6 +17,7 @@ public class VisitDto {
     private LocalDateTime updatedAt;
     private Long customerId;
     private AddressDto address;
+    private Long companyId;
 
     public static VisitDto fromEntity(Visit visit) {
         return VisitDto.builder()
@@ -27,6 +28,7 @@ public class VisitDto {
                 .updatedAt(visit.getUpdatedAt())
                 .customerId(visit.getCustomer().getId())
                 .address(AddressDto.fromEntity(visit.getAddress()))
+                .companyId(visit.getCompany().getId())
                 .build();
     }
 }

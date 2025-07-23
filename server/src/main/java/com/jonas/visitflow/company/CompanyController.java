@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/company")
@@ -15,6 +16,13 @@ import java.security.Principal;
 public class CompanyController {
 
     public final CompanyService companyService;
+
+    @GetMapping()
+    public ResponseEntity<List<CompanyDto>> getCompanyInfo(Principal principal) {
+        String userId = principal.getName();
+        List<CompanyDto> companyDto = companyService.getAllCompanies(userId);
+        return ResponseEntity.ok(companyDto);
+    }
 
     @PostMapping("/create")
     public ResponseEntity<CompanyDto> createCompany(@RequestBody @Valid CreateCompanyDto createCompanyDto, Principal principal) {
@@ -27,6 +35,13 @@ public class CompanyController {
     public ResponseEntity<CompanyDto> updateCompany(@PathVariable Long id, @RequestBody @Valid CreateCompanyDto createCompanyDto, Principal principal) {
         String userId = principal.getName();
         CompanyDto companyDto = companyService.updateCompany(id, userId, createCompanyDto);
+        return ResponseEntity.ok(companyDto);
+    }
+
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<CompanyDto> deleteCompany(@PathVariable Long id, Principal principal) {
+        String userId = principal.getName();
+        CompanyDto companyDto = companyService.deleteCompany(id, userId);
         return ResponseEntity.ok(companyDto);
     }
 

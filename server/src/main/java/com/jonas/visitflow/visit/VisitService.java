@@ -26,9 +26,13 @@ public class VisitService {
     private final CustomerRepository customerRepository;
     private final CompanyRepository companyRepository;
 
-    public VisitLinkDto createVisitLink(String userId) {
+    public VisitLinkDto createVisitLink(String userId, Long companyId) {
+        Company company = companyRepository.findByIdAndUserId(companyId, userId)
+                .orElseThrow(() -> new NotFoundException("Company not found for the given user"));
+
         VisitLink visitLink = VisitLink.builder()
                 .userId(userId)
+                .company(company)
                 .build();
 
         return VisitLinkDto.fromEntity(visitLinkRepository.save(visitLink));
@@ -67,6 +71,7 @@ public class VisitService {
                 .address(address)
                 .requestedDateTime(createVisitDto.getRequestedDateTime())
                 .note(createVisitDto.getNote())
+                .company(visitLink.getCompany())
                 .build();
 
         visitLink.setUsed(true);

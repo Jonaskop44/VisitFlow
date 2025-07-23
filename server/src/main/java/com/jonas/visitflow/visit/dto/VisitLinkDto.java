@@ -13,6 +13,7 @@ public class VisitLinkDto {
     private String expiresAt;
     private String createdAt;
     private String updatedAt;
+    private Long companyId;
 
     public static VisitLinkDto fromEntity(VisitLink visitLink) {
         return VisitLinkDto.builder()
@@ -22,6 +23,7 @@ public class VisitLinkDto {
                 .expiresAt(visitLink.getExpiresAt().toString())
                 .createdAt(visitLink.getCreatedAt().toString())
                 .updatedAt(visitLink.getUpdatedAt().toString())
+                .companyId(visitLink.getCompany().getId())
                 .build();
     }
 

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +25,11 @@ public class CompanyService {
     private  final VisitLinkRepository visitLinkRepository;
 
     public CompanyDto createCompany(CreateCompanyDto companyDto, String userId) {
+        //Check if the company domain is already used
+        if (companyRepository.existsByDomain(companyDto.getDomain())) {
+            throw new AlreadyExistsException("Company with domain " + companyDto.getDomain() + " already exists");
+        }
+
         Address address = Address.builder()
                 .street(companyDto.getStreet())
                 .city(companyDto.getCity())
@@ -67,12 +73,20 @@ public class CompanyService {
         return CompanyDto.fromEntity(company);
     }
 
+    public CompanyDto deleteCompany(Long id, String userId) {
+        Company company = companyRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Company not found"));
+
+        if (!company.getUserId().equals(userId)) {
+            throw new UnauthorizedException("Unauthorized to delete this company");
+        }
+
+        companyRepository.delete(company);
+        return CompanyDto.fromEntity(company);
+    }
+
     public CompanyDto getCompanyInfoByVisitLink(String token) {
         VisitLink visitLink = visitLinkRepository.findByToken(token).orElseThrow(() -> new NotFoundException("Visit link not found"));
-
-        if (visitLink.isUsed() || visitLink.getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new LinkAlreadyUsedException("Invalid or expired visit link");
-        }
 
         String userId = visitLink.getUserId();
 
@@ -80,6 +94,18 @@ public class CompanyService {
                 .orElseThrow(() -> new NotFoundException("Company not found"));
 
         return CompanyDto.fromEntity(company);
+    }
+
+    public List<CompanyDto> getAllCompanies(String userId) {
+        List<Company> companies = companyRepository.findAllByUserId(userId);
+
+        if (companies.isEmpty()) {
+            throw new NotFoundException("Company not found");
+        }
+
+        return companies.stream()
+                .map(CompanyDto::fromEntity)
+                .toList();
     }
 
 }

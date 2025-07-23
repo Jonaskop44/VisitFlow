@@ -18,10 +18,10 @@ public class VisitController {
 
     private final VisitService visitService;
 
-    @PostMapping("/create-link")
-    public ResponseEntity<VisitLinkDto> createVisitLink(Principal principal) {
+    @PostMapping("/{id}/create-link")
+    public ResponseEntity<VisitLinkDto> createVisitLink(Principal principal, @PathVariable Long id) {
         String userId = principal.getName();
-        VisitLinkDto visitLinkDto = visitService.createVisitLink(userId);
+        VisitLinkDto visitLinkDto = visitService.createVisitLink(userId, id);
         return ResponseEntity.ok(visitLinkDto);
     }
 

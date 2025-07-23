@@ -55,7 +55,7 @@ public class CustomerService {
     }
 
 
-    public void deleteCustomer(Long id, String userId) {
+    public CustomerDto deleteCustomer(Long id, String userId) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Customer with id " + id + " not found"));
 
@@ -64,6 +64,7 @@ public class CustomerService {
         }
 
         customerRepository.delete(customer);
+        return CustomerDto.fromEntity(customer);
     }
 
 }

@@ -43,6 +43,10 @@
         @Column(nullable = false)
         private LocalDateTime updatedAt;
 
+        @ManyToOne
+        @JoinColumn(name = "company_id", nullable = false)
+        private Company company;
+
         @PrePersist
         public void prePersist() {
             this.expiresAt = this.createdAt.plusDays(1); // Set expiration to 1 day after creation

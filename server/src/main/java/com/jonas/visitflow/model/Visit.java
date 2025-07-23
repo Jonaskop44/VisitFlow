@@ -44,4 +44,8 @@ public final class Visit {
     @JoinColumn(name = "address_id", nullable = false, unique = true)
     private Address address;
 
+    @ManyToOne
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
+
 }
