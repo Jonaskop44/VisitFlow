@@ -14,7 +14,10 @@ import com.jonas.visitflow.visit.dto.VisitLinkDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.List;
 
 
 @Service
@@ -79,6 +82,31 @@ public class VisitService {
         visit = visitRepository.save(visit);
 
         return VisitDto.fromEntity(visit);
+    }
+
+    public List<VisitDto> getAllVisits(String userId, Long companyId, LocalDate start, LocalDate end) {
+        Company company = companyRepository.findByIdAndUserId(companyId, userId)
+                .orElseThrow(() -> new NotFoundException("Company not found for the given user"));
+
+        List<Visit> visits;
+
+
+        if(start != null && end != null) {
+            LocalDateTime startDateTime = start.atStartOfDay();
+            LocalDateTime endDateTime = end.atTime(23, 59, 59);
+
+            visits = visitRepository.findByCompanyIdAndRequestedDateTimeBetween(company.getId(), startDateTime, endDateTime);
+        } else {
+            visits = visitRepository.findByCompanyId(company.getId());
+        }
+
+        if (visits.isEmpty()) {
+            throw new NotFoundException("No visits found for the given company");
+        }
+
+        return visits.stream()
+                .map(VisitDto::fromEntity)
+                .toList();
     }
 
 }
