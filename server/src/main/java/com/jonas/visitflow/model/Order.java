@@ -53,7 +53,7 @@ public final class Order {
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_option_id", nullable = false)
     private OrderOptions orderOptions;
 

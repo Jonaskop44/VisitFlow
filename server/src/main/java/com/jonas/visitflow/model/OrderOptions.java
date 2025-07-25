@@ -28,7 +28,7 @@ public final class OrderOptions {
     private BigDecimal price;
 
     @Column(nullable = false)
-    private Duration duration;
+    private Long duration;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
