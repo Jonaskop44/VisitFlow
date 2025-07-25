@@ -18,7 +18,7 @@ services:
     restart: always
     environment:
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://visitflow-db:5432/visitflow
+      KC_DB_URL: jdbc:postgresql://visitflow-db:5432/visitflow?currentSchema=keycloak
       KC_DB_USERNAME: postgresql
       KC_DB_PASSWORD: mysecretpassword
       KC_BOOTSTRAP_ADMIN_USERNAME: admin

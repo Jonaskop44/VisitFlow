@@ -1,5 +1,6 @@
 package com.jonas.visitflow.model;
 
+import com.jonas.visitflow.model.enums.InvoiceStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -7,32 +8,31 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "customers")
+@Table(name = "invoices")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public final class Customer {
+public final class Invoice {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String firstName;
+    private String stripePaymentId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String lastName;
+    private InvoiceStatus status;
 
-    @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private String phoneNumber;
+    @Column(nullable = true)
+    private LocalDateTime paidAt;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -42,9 +42,11 @@ public final class Customer {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
-    private Company company;
+    @OneToOne
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PdfDocument> pdfDocuments;
 
 }

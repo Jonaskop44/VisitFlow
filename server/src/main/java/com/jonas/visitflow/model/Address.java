@@ -41,8 +41,4 @@ public final class Address {
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
-
-    @OneToOne(mappedBy = "address")
-    private Visit visit;
-
 }

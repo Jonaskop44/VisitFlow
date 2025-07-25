@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateCustomerDto {
+public class UpdateCustomerDto {
 
     @NotBlank(message = "Firstname cannot be empty")
     private String firstName;

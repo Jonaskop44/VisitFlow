@@ -1,4 +1,4 @@
-package com.jonas.visitflow.visit.dto;
+package com.jonas.visitflow.order.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class CreateVisitDto {
+public class CreateOrderDto {
 
     //Customer information
     @NotBlank(message = "Firstname cannot be empty")
@@ -26,9 +26,12 @@ public class CreateVisitDto {
     @NotBlank(message = "Phone number cannot be empty")
     private String phoneNumber;
 
-   // Visit information
+   // Order information
    @NotNull(message = "Requested date and time is required")
    private LocalDateTime requestedDateTime;
+
+   @NotNull(message = "Order option is required")
+   private Long orderOptionId;
 
    private String note;
 

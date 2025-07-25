@@ -7,26 +7,27 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "visits")
+@Table(name = "pdf_documents")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public final class Visit {
+public final class PdfDocument {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime requestedDateTime;
+    private String fileName;
 
-    @Column(nullable = true)
-    private String note;
+    @Column(nullable = false)
+    private String token;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -36,16 +37,13 @@ public final class Visit {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToOne
-    @JoinColumn(name = "customer_id", nullable = false, unique = true)
-    private Customer customer;
+    @PrePersist
+    public void prePersist() {
+        this.token = UUID.randomUUID().toString();
+    }
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "address_id", nullable = false, unique = true)
-    private Address address;
-
-    @ManyToOne
-    @JoinColumn(name = "company_id", nullable = false)
-    private Company company;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_id", nullable = false)
+    private Invoice invoice;
 
 }

@@ -14,7 +14,6 @@ public class CustomerDto {
     private String lastName;
     private String email;
     private String phoneNumber;
-    private String userId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -26,7 +25,6 @@ public class CustomerDto {
                 .lastName(customer.getLastName())
                 .email(customer.getEmail())
                 .phoneNumber(customer.getPhoneNumber())
-                .userId(customer.getUserId())
                 .createdAt(customer.getCreatedAt())
                 .updatedAt(customer.getUpdatedAt())
                 .build();

@@ -1,6 +1,6 @@
 package com.jonas.visitflow.customer;
 
-import com.jonas.visitflow.customer.dto.CreateCustomerDto;
+import com.jonas.visitflow.customer.dto.UpdateCustomerDto;
 import com.jonas.visitflow.customer.dto.CustomerDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,16 +24,9 @@ public class CustomerController {
         return ResponseEntity.ok(customers);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<CustomerDto> createCustomer(@RequestBody @Valid CreateCustomerDto customerDto, Principal principal) {
-        String userId = principal.getName();
-        CustomerDto createdCustomer = customerService.createCustomer(customerDto, userId);
-        return ResponseEntity.ok(createdCustomer);
-    }
-
     @PatchMapping("/edit/{id}")
     public ResponseEntity<CustomerDto> updateCustomer(@PathVariable Long id,
-                                                      @RequestBody @Valid CreateCustomerDto customerDto,
+                                                      @RequestBody @Valid UpdateCustomerDto customerDto,
                                                       Principal principal) {
         String userId = principal.getName();
         CustomerDto updatedCustomer = customerService.updateCustomer(id, customerDto, userId);

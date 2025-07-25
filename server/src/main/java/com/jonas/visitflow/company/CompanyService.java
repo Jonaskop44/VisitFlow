@@ -3,26 +3,22 @@ package com.jonas.visitflow.company;
 import com.jonas.visitflow.company.dto.CompanyDto;
 import com.jonas.visitflow.company.dto.CreateCompanyDto;
 import com.jonas.visitflow.exception.AlreadyExistsException;
-import com.jonas.visitflow.exception.LinkAlreadyUsedException;
 import com.jonas.visitflow.exception.NotFoundException;
 import com.jonas.visitflow.exception.UnauthorizedException;
 import com.jonas.visitflow.model.Address;
 import com.jonas.visitflow.model.Company;
-import com.jonas.visitflow.model.VisitLink;
 import com.jonas.visitflow.repository.CompanyRepository;
-import com.jonas.visitflow.repository.VisitLinkRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
-    private  final VisitLinkRepository visitLinkRepository;
 
     public CompanyDto createCompany(CreateCompanyDto companyDto, String userId) {
         //Check if the company domain is already used
@@ -50,7 +46,7 @@ public class CompanyService {
         return CompanyDto.fromEntity(company);
     }
 
-    public CompanyDto updateCompany(Long id, String userId, CreateCompanyDto companyDto) {
+    public CompanyDto updateCompany(UUID id, String userId, CreateCompanyDto companyDto) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Company not found"));
 
@@ -73,7 +69,7 @@ public class CompanyService {
         return CompanyDto.fromEntity(company);
     }
 
-    public CompanyDto deleteCompany(Long id, String userId) {
+    public CompanyDto deleteCompany(UUID id, String userId) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Company not found"));
 
@@ -85,13 +81,8 @@ public class CompanyService {
         return CompanyDto.fromEntity(company);
     }
 
-    public CompanyDto getCompanyInfoByVisitLink(String token) {
-        VisitLink visitLink = visitLinkRepository.findByToken(token).orElseThrow(() -> new NotFoundException("Visit link not found"));
-
-        String userId = visitLink.getUserId();
-
-        Company company = companyRepository.findByUserId(userId)
-                .orElseThrow(() -> new NotFoundException("Company not found"));
+    public CompanyDto getCompanyInfo(UUID id) {
+        Company company = companyRepository.findById(id).orElseThrow(() -> new NotFoundException("Company not found"));
 
         return CompanyDto.fromEntity(company);
     }

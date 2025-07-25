@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/company")
@@ -32,22 +33,22 @@ public class CompanyController {
     }
 
     @PatchMapping("/{id}/update")
-    public ResponseEntity<CompanyDto> updateCompany(@PathVariable Long id, @RequestBody @Valid CreateCompanyDto createCompanyDto, Principal principal) {
+    public ResponseEntity<CompanyDto> updateCompany(@PathVariable UUID id, @RequestBody @Valid CreateCompanyDto createCompanyDto, Principal principal) {
         String userId = principal.getName();
         CompanyDto companyDto = companyService.updateCompany(id, userId, createCompanyDto);
         return ResponseEntity.ok(companyDto);
     }
 
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<CompanyDto> deleteCompany(@PathVariable Long id, Principal principal) {
+    public ResponseEntity<CompanyDto> deleteCompany(@PathVariable UUID id, Principal principal) {
         String userId = principal.getName();
         CompanyDto companyDto = companyService.deleteCompany(id, userId);
         return ResponseEntity.ok(companyDto);
     }
 
-    @GetMapping("/{token}/info")
-    public ResponseEntity<CompanyDto> getCompanyInfoByVisitLink(@PathVariable String token) {
-        CompanyDto companyDto = companyService.getCompanyInfoByVisitLink(token);
+    @GetMapping("/{id}/info")
+    public ResponseEntity<CompanyDto> getCompanyInfo(@PathVariable UUID id) {
+        CompanyDto companyDto = companyService.getCompanyInfo(id);
         return ResponseEntity.ok(companyDto);
     }
 
