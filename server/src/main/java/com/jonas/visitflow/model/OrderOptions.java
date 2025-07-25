@@ -30,7 +30,7 @@ public final class OrderOptions {
     @Column(nullable = false)
     private Long duration;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
