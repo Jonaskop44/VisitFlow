@@ -21,7 +21,7 @@ public class OrderDto {
     private UUID companyId;
     private Long customerId;
     private AddressDto address;
-    private Long orderOptionsId;
+    private Long productId;
 
     public static OrderDto fromEntity(Order order) {
         return OrderDto.builder()
@@ -34,7 +34,7 @@ public class OrderDto {
                 .companyId(order.getCompany().getId())
                 .customerId(order.getCustomer().getId())
                 .address(AddressDto.fromEntity(order.getAddress()))
-                .orderOptionsId(order.getOrderOptions().getId())
+                .productId(order.getProduct().getId())
                 .build();
     }
 }

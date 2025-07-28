@@ -54,8 +54,8 @@ public final class Order {
     private Address address;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_option_id", nullable = false)
-    private OrderOptions orderOptions;
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Invoice invoice;

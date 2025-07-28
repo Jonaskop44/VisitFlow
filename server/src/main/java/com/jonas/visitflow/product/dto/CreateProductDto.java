@@ -1,4 +1,4 @@
-package com.jonas.visitflow.orderoptions.dto;
+package com.jonas.visitflow.product.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class CreateOrderOptionsDto {
+public class CreateProductDto {
 
     @NotBlank(message = "Name cannot be empty")
     private String name;
@@ -19,7 +19,5 @@ public class CreateOrderOptionsDto {
 
     @NotNull(message = "Duration cannot be null")
     private Long duration; // Duration in minutes
-
-
 
 }

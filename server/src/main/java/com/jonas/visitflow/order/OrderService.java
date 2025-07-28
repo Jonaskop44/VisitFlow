@@ -5,7 +5,7 @@ import com.jonas.visitflow.model.*;
 import com.jonas.visitflow.model.enums.OrderStatus;
 import com.jonas.visitflow.repository.CompanyRepository;
 import com.jonas.visitflow.repository.CustomerRepository;
-import com.jonas.visitflow.repository.OrderOptionsRepository;
+import com.jonas.visitflow.repository.ProductRepository;
 import com.jonas.visitflow.repository.OrderRepository;
 import com.jonas.visitflow.order.dto.CreateOrderDto;
 import com.jonas.visitflow.order.dto.OrderDto;
@@ -25,13 +25,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
     private final CompanyRepository companyRepository;
-    private final OrderOptionsRepository orderOptionsRepository;
+    private final ProductRepository productRepository;
 
     public OrderDto createOrder(CreateOrderDto createOrderDto, UUID id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Company not found"));
 
-        OrderOptions orderOptions = orderOptionsRepository.findById(createOrderDto.getOrderOptionId())
+        Product product = productRepository.findById(createOrderDto.getOrderOptionId())
                 .orElseThrow(() -> new NotFoundException("Order option not found"));
 
         //Create customer
@@ -61,7 +61,7 @@ public class OrderService {
                 .company(company)
                 .customer(customer)
                 .address(address)
-                .orderOptions(orderOptions)
+                .product(product)
                 .build();
 
         order = orderRepository.save(order);
