@@ -31,7 +31,7 @@ public class CreateOrderDto {
    private LocalDateTime requestedDateTime;
 
    @NotNull(message = "Order option is required")
-   private Long orderOptionId;
+   private Long productId;
 
    private String note;
 

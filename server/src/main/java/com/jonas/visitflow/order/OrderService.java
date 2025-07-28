@@ -31,8 +31,8 @@ public class OrderService {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Company not found"));
 
-        Product product = productRepository.findById(createOrderDto.getOrderOptionId())
-                .orElseThrow(() -> new NotFoundException("Order option not found"));
+        Product product = productRepository.findById(createOrderDto.getProductId())
+                .orElseThrow(() -> new NotFoundException("Product not found"));
 
         //Create customer
         Customer customer = Customer.builder()
