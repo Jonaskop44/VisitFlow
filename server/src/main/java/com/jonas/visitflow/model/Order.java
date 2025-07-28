@@ -41,7 +41,7 @@ public final class Order {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 

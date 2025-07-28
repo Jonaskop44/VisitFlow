@@ -19,15 +19,15 @@ public class ProductDto {
     private LocalDateTime updatedAt;
     private UUID companyId;
 
-    public static ProductDto fromEntity(Product orderOptions) {
+    public static ProductDto fromEntity(Product product) {
         return ProductDto.builder()
-                .id(orderOptions.getId())
-                .name(orderOptions.getName())
-                .price(orderOptions.getPrice())
-                .duration(orderOptions.getDuration())
-                .createdAt(orderOptions.getCreatedAt())
-                .updatedAt(orderOptions.getUpdatedAt())
-                .companyId(orderOptions.getCompany().getId())
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .duration(product.getDuration())
+                .createdAt(product.getCreatedAt())
+                .updatedAt(product.getUpdatedAt())
+                .companyId(product.getCompany().getId())
                 .build();
     }
 
