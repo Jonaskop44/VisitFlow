@@ -2,6 +2,7 @@ package com.jonas.visitflow.order;
 
 import com.jonas.visitflow.order.dto.CreateOrderDto;
 import com.jonas.visitflow.order.dto.OrderDto;
+import com.jonas.visitflow.order.dto.UpdateOrderDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -36,6 +37,15 @@ public class OrderController {
         String userId = principal.getName();
         List<OrderDto> orders = orderService.getAllOrders(userId, id, start, end);
         return ResponseEntity.ok(orders);
+    }
+
+    @PatchMapping("/{id}/update")
+    public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable Long id,
+                                                      @RequestBody @Valid UpdateOrderDto updateOrderDto,
+                                                      Principal principal) {
+        String userId = principal.getName();
+        OrderDto updatedOrder = orderService.updateOrderStatus(id, updateOrderDto, userId);
+        return ResponseEntity.ok(updatedOrder);
     }
 
 }

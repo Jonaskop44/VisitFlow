@@ -3,6 +3,7 @@ package com.jonas.visitflow.order;
 import com.jonas.visitflow.exception.NotFoundException;
 import com.jonas.visitflow.model.*;
 import com.jonas.visitflow.model.enums.OrderStatus;
+import com.jonas.visitflow.order.dto.UpdateOrderDto;
 import com.jonas.visitflow.repository.CompanyRepository;
 import com.jonas.visitflow.repository.CustomerRepository;
 import com.jonas.visitflow.repository.ProductRepository;
@@ -91,6 +92,20 @@ public class OrderService {
         return orders.stream()
                 .map(OrderDto::fromEntity)
                 .toList();
+    }
+
+    public OrderDto updateOrderStatus(Long orderId, UpdateOrderDto updateOrderDto, String userId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order not found"));
+
+        if (!order.getCompany().getUserId().equals(userId)) {
+            throw new NotFoundException("Order not found for the given user");
+        }
+
+        order.setStatus(updateOrderDto.getStatus());
+        order = orderRepository.save(order);
+
+        return OrderDto.fromEntity(order);
     }
 
 }
