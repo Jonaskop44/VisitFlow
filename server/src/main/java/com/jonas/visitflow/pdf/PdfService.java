@@ -4,13 +4,17 @@ import com.jonas.visitflow.exception.NotFoundException;
 import com.jonas.visitflow.exception.UnauthorizedException;
 import com.jonas.visitflow.model.Invoice;
 import com.jonas.visitflow.model.PdfDocument;
+import com.jonas.visitflow.model.enums.InvoiceStatus;
 import com.jonas.visitflow.pdf.dto.PdfDto;
 import com.jonas.visitflow.repository.InvoiceRepository;
 import com.jonas.visitflow.repository.PdfRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.Resource;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,6 +61,28 @@ public class PdfService {
                 .build();
         pdfDocument = pdfRepository.save(pdfDocument);
         return PdfDto.fromEntity(pdfDocument);
+    }
+
+    public Resource downloadPdf(String token) {
+        PdfDocument pdfDocument = pdfRepository.findByToken(token)
+                .orElseThrow(() -> new NotFoundException("PDF not found"));
+
+        if(pdfDocument.getInvoice().getStatus() != InvoiceStatus.PAID) {
+            throw new UnauthorizedException("The invoice is not paid, download not allowed");
+        }
+
+        Path path = Paths.get(storageDirectory).resolve(pdfDocument.getFileName());
+
+        try {
+            Resource resource = new UrlResource(path.toUri());
+            if(!resource.exists() || !resource.isReadable()) {
+                throw new NotFoundException("PDF file not found or not readable");
+            }
+            return resource;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to download PDF file: " + e.getMessage());
+        }
+
     }
 
 }
