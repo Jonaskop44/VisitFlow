@@ -20,8 +20,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 @RequiredArgsConstructor
@@ -64,23 +67,53 @@ public class PdfService {
     }
 
     public Resource downloadPdf(String token) {
-        PdfDocument pdfDocument = pdfRepository.findByToken(token)
+        Invoice invoice = invoiceRepository.findByToken(token)
                 .orElseThrow(() -> new NotFoundException("PDF not found"));
 
-        if(pdfDocument.getInvoice().getStatus() != InvoiceStatus.PAID) {
+        if(invoice.getStatus() != InvoiceStatus.PAID) {
             throw new UnauthorizedException("The invoice is not paid, download not allowed");
         }
 
-        Path path = Paths.get(storageDirectory).resolve(pdfDocument.getFileName());
+        List<PdfDocument> pdfDocuments = invoice.getPdfDocuments();
+        if(pdfDocuments.isEmpty()) {
+            throw new NotFoundException("No PDF documents found for this invoice");
+        }
 
         try {
-            Resource resource = new UrlResource(path.toUri());
-            if(!resource.exists() || !resource.isReadable()) {
-                throw new NotFoundException("PDF file not found or not readable");
+            if(pdfDocuments.size() == 1) {
+                PdfDocument pdfDocument = pdfDocuments.getFirst();
+                Path filePath = Paths.get(storageDirectory).resolve(pdfDocument.getFileName());
+                Resource resource = new UrlResource(filePath.toUri());
+                if (!resource.exists() || !resource.isReadable()) {
+                    throw new NotFoundException("PDF file not found or not readable");
+                }
+                return resource;
+            } else {
+                String zipFileName = "invoice_" + invoice.getId() + ".zip";
+                Path zipPath = Paths.get(storageDirectory).resolve(zipFileName);
+
+                try (ZipOutputStream zipOut = new ZipOutputStream(Files.newOutputStream(zipPath))) {
+                    for (PdfDocument pdf : pdfDocuments) {
+                        Path filePath = Paths.get(storageDirectory).resolve(pdf.getFileName());
+                        if (!Files.exists(filePath) || !Files.isReadable(filePath)) {
+                            continue; // Skip if file does not exist or is not readable
+                        }
+
+                        zipOut.putNextEntry(new ZipEntry(pdf.getFileName()));
+                        Files.copy(filePath, zipOut);
+                        zipOut.closeEntry();
+                    }
+                }
+
+                Resource zipResource = new UrlResource(zipPath.toUri());
+                if (!zipResource.exists() || !zipResource.isReadable()) {
+                    throw new NotFoundException("ZIP file not created or not readable");
+                }
+
+                return zipResource;
             }
-            return resource;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to download PDF file: " + e.getMessage());
+            throw new RuntimeException("Failed to load PDF file: " + e.getMessage());
         }
 
     }

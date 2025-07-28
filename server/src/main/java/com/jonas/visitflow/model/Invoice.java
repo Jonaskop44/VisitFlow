@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -34,6 +35,9 @@ public final class Invoice {
     @Column(nullable = true)
     private LocalDateTime paidAt;
 
+    @Column(nullable = false)
+    private String token;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -46,7 +50,12 @@ public final class Invoice {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<PdfDocument> pdfDocuments;
+
+    @PrePersist
+    public void prePersist() {
+        this.token = UUID.randomUUID().toString();
+    }
 
 }

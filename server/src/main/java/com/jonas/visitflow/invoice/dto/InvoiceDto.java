@@ -14,6 +14,7 @@ public class InvoiceDto {
     private String stripePaymentId;
     private InvoiceStatus status;
     private LocalDateTime paidAt;
+    private String token;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long orderId;
@@ -24,6 +25,7 @@ public class InvoiceDto {
                 .stripePaymentId(invoice.getStripePaymentId())
                 .status(invoice.getStatus())
                 .paidAt(invoice.getPaidAt())
+                .token(invoice.getToken())
                 .createdAt(invoice.getCreatedAt())
                 .updatedAt(invoice.getUpdatedAt())
                 .orderId(invoice.getOrder().getId())

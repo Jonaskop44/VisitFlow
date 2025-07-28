@@ -26,9 +26,6 @@ public final class PdfDocument {
     @Column(nullable = false)
     private String fileName;
 
-    @Column(nullable = false)
-    private String token;
-
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -37,12 +34,7 @@ public final class PdfDocument {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @PrePersist
-    public void prePersist() {
-        this.token = UUID.randomUUID().toString();
-    }
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "invoice_id", nullable = false)
     private Invoice invoice;
 
