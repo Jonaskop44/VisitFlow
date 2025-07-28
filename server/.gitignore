@@ -7,6 +7,9 @@ target/
 # env files (can opt-in for committing if needed)
 .env
 
+#Uploaded files
+/uploads
+
 ### STS ###
 .apt_generated
 .classpath
