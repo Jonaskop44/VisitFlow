@@ -14,6 +14,7 @@ import com.jonas.visitflow.repository.InvoiceRepository;
 import com.jonas.visitflow.repository.OrderRepository;
 import com.jonas.visitflow.stripe.StripeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +30,12 @@ public class InvoiceService {
     private final CompanyRepository companyRepository;
     private final StripeService stripeService;
     private final MailService mailService;
+
+    @Value("${stripe.success.url}")
+    private String successUrl;
+
+    @Value("${stripe.cancel.url}")
+    private String cancelUrl;
 
     public InvoiceDto createInvoice(Long orderId, String userId) {
         Order order = orderRepository.findById(orderId).
@@ -53,7 +60,9 @@ public class InvoiceService {
 
         //Stripe Checkout Session creation
         String priceId = order.getProduct().getStripePriceId();
-        String checkoutSessionId = stripeService.createCheckoutSession(priceId);
+        successUrl = successUrl + "/" + invoice.getToken();
+
+        String checkoutSessionId = stripeService.createCheckoutSession(priceId, successUrl, cancelUrl);
 
         //Send mail to customer
         String customerEmail = order.getCustomer().getEmail();

@@ -25,12 +25,6 @@ public class StripeService {
     @Value("${stripe.api.key}")
     private String stripeApiKey;
 
-    @Value("${stripe.success.url}")
-    private String successUrl;
-
-    @Value("${stripe.cancel.url}")
-    private String cancelUrl;
-
     @PostConstruct
     public void init() {
         Stripe.apiKey = stripeApiKey;
@@ -110,7 +104,7 @@ public class StripeService {
         }
     }
 
-    public String createCheckoutSession(String priceId) {
+    public String createCheckoutSession(String priceId, String successUrl, String cancelUrl) {
         try {
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
