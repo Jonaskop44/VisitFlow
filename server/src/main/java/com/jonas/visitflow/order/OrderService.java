@@ -1,6 +1,7 @@
 package com.jonas.visitflow.order;
 
 import com.jonas.visitflow.exception.NotFoundException;
+import com.jonas.visitflow.mail.MailService;
 import com.jonas.visitflow.model.*;
 import com.jonas.visitflow.model.enums.OrderStatus;
 import com.jonas.visitflow.order.dto.UpdateOrderDto;
@@ -27,6 +28,7 @@ public class OrderService {
     private final CustomerRepository customerRepository;
     private final CompanyRepository companyRepository;
     private final ProductRepository productRepository;
+    private final MailService mailService;
 
     public OrderDto createOrder(CreateOrderDto createOrderDto, UUID id) {
         Company company = companyRepository.findById(id)
@@ -65,8 +67,12 @@ public class OrderService {
                 .product(product)
                 .build();
 
-        order = orderRepository.save(order);
+        //Send confirmation email
+        String customerName = customer.getFirstName() + " " + customer.getLastName();
 
+        mailService.sendOrderConfirmation(customer.getEmail(), customerName, "Order Confirmation", customerName, company.getName());
+
+        order = orderRepository.save(order);
         return OrderDto.fromEntity(order);
     }
 
