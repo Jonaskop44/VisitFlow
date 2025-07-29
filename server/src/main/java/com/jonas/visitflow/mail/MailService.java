@@ -1,5 +1,6 @@
 package com.jonas.visitflow.mail;
 
+import com.jonas.visitflow.model.enums.OrderStatus;
 import com.mailgun.api.v3.MailgunMessagesApi;
 import com.mailgun.model.message.Message;
 import com.mailgun.util.EmailUtil;
@@ -22,25 +23,47 @@ public class MailService {
     @Value("${mailgun.from}")
     private String fromEmail;
 
-    public void sendOrderConfirmation(String toEmail, String toName, String subject, String customerName, String companyName) {
-
-        Map<String, Object> templateVars = Map.of(
-                "customer_name", customerName,
-                "company_name", companyName);
-
+    private void sendTemplateMail(String toEmail, String toName, String subject, String templateName, Map<String, Object> variables) {
         Message message = Message.builder()
                 .from(fromEmail)
                 .to(EmailUtil.nameWithEmail(toName, toEmail))
                 .subject(subject)
-                .template("orderconfirmation")
-                .mailgunVariables(templateVars)
+                .template(templateName)
+                .mailgunVariables(variables)
                 .build();
 
         try {
-        mailgunMessagesApi.sendMessage(domain, message);
+            mailgunMessagesApi.sendMessage(domain, message);
         } catch (FeignException e) {
             throw new RuntimeException("Failed to send email: " + e.getMessage(), e);
         }
     }
+
+    public void sendOrderConfirmation(String toEmail, String toName, String subject, String customerName, String companyName) {
+        Map<String, Object> vars = Map.of(
+                "customer_name", customerName,
+                "company_name", companyName
+        );
+        sendTemplateMail(toEmail, toName, subject, "orderconfirmation", vars);
+    }
+
+    public void sendOrderStatusUpdate(String toEmail, String toName, String subject, String customerName, String companyName, OrderStatus status) {
+        Map<String, Object> vars = Map.of(
+                "customer_name", customerName,
+                "company_name", companyName,
+                "order_status", translateOrderStatus(status)
+        );
+        sendTemplateMail(toEmail, toName, subject, "OrderStatusUpdate", vars);
+    }
+
+
+    private String translateOrderStatus(OrderStatus status) {
+        return switch (status) {
+            case REQUESTED -> "Angefragt";
+            case CONFIRMED -> "Bestätigt";
+            case CANCELLED -> "Storniert";
+        };
+    }
+
 
 }

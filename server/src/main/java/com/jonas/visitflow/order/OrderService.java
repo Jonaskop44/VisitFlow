@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -69,8 +68,9 @@ public class OrderService {
 
         //Send confirmation email
         String customerName = customer.getFirstName() + " " + customer.getLastName();
+        String customerEmail = customer.getEmail();
 
-        mailService.sendOrderConfirmation(customer.getEmail(), customerName, "Order Confirmation", customerName, company.getName());
+        mailService.sendOrderConfirmation(customerEmail, customerName, "Order Confirmation", customerName, company.getName());
 
         order = orderRepository.save(order);
         return OrderDto.fromEntity(order);
@@ -110,6 +110,14 @@ public class OrderService {
 
         order.setStatus(updateOrderDto.getStatus());
         order = orderRepository.save(order);
+
+        //Send status update email
+        String customerName = order.getCustomer().getFirstName() + " " + order.getCustomer().getLastName();
+        String customerEmail = order.getCustomer().getEmail();
+        String companyName = order.getCompany().getName();
+        String status = order.getStatus().toString();
+
+        mailService.sendOrderStatusUpdate(customerEmail, companyName, "Order Status Update", customerName, companyName, OrderStatus.valueOf(status));
 
         return OrderDto.fromEntity(order);
     }
