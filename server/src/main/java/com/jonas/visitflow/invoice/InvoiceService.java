@@ -4,6 +4,7 @@ import com.jonas.visitflow.exception.AlreadyExistsException;
 import com.jonas.visitflow.exception.NotFoundException;
 import com.jonas.visitflow.exception.UnauthorizedException;
 import com.jonas.visitflow.invoice.dto.InvoiceDto;
+import com.jonas.visitflow.mail.MailService;
 import com.jonas.visitflow.model.Company;
 import com.jonas.visitflow.model.Invoice;
 import com.jonas.visitflow.model.Order;
@@ -11,6 +12,7 @@ import com.jonas.visitflow.model.enums.InvoiceStatus;
 import com.jonas.visitflow.repository.CompanyRepository;
 import com.jonas.visitflow.repository.InvoiceRepository;
 import com.jonas.visitflow.repository.OrderRepository;
+import com.jonas.visitflow.stripe.StripeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,8 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final OrderRepository orderRepository;
     private final CompanyRepository companyRepository;
+    private final StripeService stripeService;
+    private final MailService mailService;
 
     public InvoiceDto createInvoice(Long orderId, String userId) {
         Order order = orderRepository.findById(orderId).
@@ -46,6 +50,18 @@ public class InvoiceService {
                 .build();
 
         invoice = invoiceRepository.save(invoice);
+
+        //Stripe Checkout Session creation
+        String priceId = order.getProduct().getStripePriceId();
+        String checkoutSessionId = stripeService.createCheckoutSession(priceId);
+
+        //Send mail to customer
+        String customerEmail = order.getCustomer().getEmail();
+        String customerName = order.getCustomer().getFirstName() + " " + order.getCustomer().getLastName();
+        String companyName = order.getCompany().getName();
+
+        mailService.sendInvoicePaymentRequest(customerEmail, customerName, "Invoice Payment Request", customerName, companyName, checkoutSessionId);
+
         return InvoiceDto.fromEntity(invoice);
     }
 

@@ -69,6 +69,21 @@ public class MailService {
         sendTemplateMail(toEmail, toName, subject, "OrderStatusUpdate", vars);
     }
 
+    public void sendInvoicePaymentRequest(
+            String toEmail,
+            String toName,
+            String subject,
+            String customerName,
+            String companyName,
+            String paymentLink) {
+        Map<String, Object> vars = Map.of(
+                "customer_name", customerName,
+                "company_name", companyName,
+                "payment_link", paymentLink);
+
+        sendTemplateMail(toEmail, toName, subject, "InvoicePaymentRequest", vars);
+    }
+
     private String translateOrderStatus(OrderStatus status) {
         return switch (status) {
             case REQUESTED -> "Angefragt";

@@ -4,10 +4,12 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Price;
 import com.stripe.model.Product;
+import com.stripe.model.checkout.Session;
 import com.stripe.param.PriceCreateParams;
 import com.stripe.param.PriceUpdateParams;
 import com.stripe.param.ProductCreateParams;
 import com.stripe.param.ProductUpdateParams;
+import com.stripe.param.checkout.SessionCreateParams;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,12 @@ public class StripeService {
 
     @Value("${stripe.api.key}")
     private String stripeApiKey;
+
+    @Value("${stripe.success.url}")
+    private String successUrl;
+
+    @Value("${stripe.cancel.url}")
+    private String cancelUrl;
 
     @PostConstruct
     public void init() {
@@ -102,5 +110,25 @@ public class StripeService {
         }
     }
 
+    public String createCheckoutSession(String priceId) {
+        try {
+            SessionCreateParams params = SessionCreateParams.builder()
+                    .setMode(SessionCreateParams.Mode.PAYMENT)
+                    .setSuccessUrl(successUrl)
+                    .setCancelUrl(cancelUrl)
+                    .addLineItem(
+                            SessionCreateParams.LineItem.builder()
+                                    .setQuantity(1L)
+                                    .setPrice(priceId)
+                                    .build()
+                    )
+                    .build();
+
+            Session session = Session.create(params);
+            return session.getUrl();
+        } catch (StripeException e) {
+            throw new RuntimeException("Stripe Checkout Session creation failed: " + e.getMessage());
+        }
+    }
 
 }
