@@ -39,23 +39,35 @@ public class MailService {
         }
     }
 
-    public void sendOrderConfirmation(String toEmail, String toName, String subject, String customerName, String companyName) {
+    public void sendOrderConfirmation(
+            String toEmail,
+            String toName,
+            String subject,
+            String customerName,
+            String companyName) {
         Map<String, Object> vars = Map.of(
                 "customer_name", customerName,
                 "company_name", companyName
         );
+
         sendTemplateMail(toEmail, toName, subject, "orderconfirmation", vars);
     }
 
-    public void sendOrderStatusUpdate(String toEmail, String toName, String subject, String customerName, String companyName, OrderStatus status) {
+    public void sendOrderStatusUpdate(
+            String toEmail,
+            String toName,
+            String subject,
+            String customerName,
+            String companyName,
+            OrderStatus status) {
         Map<String, Object> vars = Map.of(
                 "customer_name", customerName,
                 "company_name", companyName,
                 "order_status", translateOrderStatus(status)
         );
+
         sendTemplateMail(toEmail, toName, subject, "OrderStatusUpdate", vars);
     }
-
 
     private String translateOrderStatus(OrderStatus status) {
         return switch (status) {
