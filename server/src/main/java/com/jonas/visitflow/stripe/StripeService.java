@@ -28,7 +28,6 @@ public class StripeService {
     @PostConstruct
     public void init() {
         Stripe.apiKey = stripeApiKey;
-        System.out.println("Stripe Api Key: " + stripeApiKey);
     }
 
     public String createProduct(String name) {

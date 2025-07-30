@@ -16,10 +16,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/**").authenticated()
+                        .requestMatchers("/api/stripe/webhook").permitAll() // Webhook offen
+                        .requestMatchers("/api/v1/**").authenticated()      // Auth nötig
                         .anyRequest().permitAll()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt());
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt())
+                .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
