@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -62,14 +63,20 @@ public class InvoiceService {
         String priceId = order.getProduct().getStripePriceId();
         successUrl = successUrl + "/" + invoice.getToken();
 
-        String checkoutSessionId = stripeService.createCheckoutSession(priceId, successUrl, cancelUrl);
+        Map<String, String> checkoutSessionId = stripeService.createCheckoutSession(priceId, successUrl, cancelUrl);
+
+        String url = checkoutSessionId.get("url");
+        String sessionId = checkoutSessionId.get("sessionId");
+
+        invoice.setStripeSessionId(sessionId);
+        invoice = invoiceRepository.save(invoice);
 
         //Send mail to customer
         String customerEmail = order.getCustomer().getEmail();
         String customerName = order.getCustomer().getFirstName() + " " + order.getCustomer().getLastName();
         String companyName = order.getCompany().getName();
 
-        mailService.sendInvoicePaymentRequest(customerEmail, customerName, "Invoice Payment Request", customerName, companyName, checkoutSessionId);
+        mailService.sendInvoicePaymentRequest(customerEmail, customerName, "Invoice Payment Request", customerName, companyName, url);
 
         return InvoiceDto.fromEntity(invoice);
     }

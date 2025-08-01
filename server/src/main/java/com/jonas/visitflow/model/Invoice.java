@@ -28,6 +28,9 @@ public final class Invoice {
     @Column(nullable = true)
     private String stripePaymentId;
 
+    @Column(nullable = true)
+    private String stripeSessionId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private InvoiceStatus status;

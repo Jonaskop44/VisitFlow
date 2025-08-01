@@ -10,4 +10,5 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     boolean existsByOrder(Order order);
     List<Invoice> findAllByOrderCompany(Company company);
     Optional<Invoice> findByToken(String token);
+    Optional<Invoice> findByStripeSessionId(String stripeSessionId);
 }

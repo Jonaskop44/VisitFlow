@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -103,7 +104,7 @@ public class StripeService {
         }
     }
 
-    public String createCheckoutSession(String priceId, String successUrl, String cancelUrl) {
+    public Map<String, String> createCheckoutSession(String priceId, String successUrl, String cancelUrl) {
         try {
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.PAYMENT)
@@ -118,7 +119,10 @@ public class StripeService {
                     .build();
 
             Session session = Session.create(params);
-            return session.getUrl();
+            return Map.of(
+                    "sessionId", session.getId(),
+                    "url", session.getUrl()
+            );
         } catch (StripeException e) {
             throw new RuntimeException("Stripe Checkout Session creation failed: " + e.getMessage());
         }

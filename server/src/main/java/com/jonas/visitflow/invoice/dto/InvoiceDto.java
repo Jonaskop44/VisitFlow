@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class InvoiceDto {
     private Long id;
     private String stripePaymentId;
+    private String stripeSessionId;
     private InvoiceStatus status;
     private LocalDateTime paidAt;
     private String token;
@@ -23,6 +24,7 @@ public class InvoiceDto {
         return InvoiceDto.builder()
                 .id(invoice.getId())
                 .stripePaymentId(invoice.getStripePaymentId())
+                .stripeSessionId(invoice.getStripeSessionId())
                 .status(invoice.getStatus())
                 .paidAt(invoice.getPaidAt())
                 .token(invoice.getToken())
