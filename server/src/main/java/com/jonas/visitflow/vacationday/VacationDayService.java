@@ -45,7 +45,6 @@ public class VacationDayService {
                 .company(company)
                 .build();
 
-        company.setEnabled(true);
         companyRepository.save(company);
 
         vacationDay = vacationDayRepository.save(vacationDay);
@@ -104,14 +103,6 @@ public class VacationDayService {
         }
 
         vacationDayRepository.delete(vacationDay);
-
-        //Check if the company still has vacation days
-        List<VacationDay> vacationDays = vacationDayRepository.findAllByCompany(vacationDay.getCompany());
-        if (vacationDays.isEmpty()) {
-            vacationDay.getCompany().setEnabled(false);
-            companyRepository.save(vacationDay.getCompany());
-        }
-
         return VacationDayDto.fromEntity(vacationDay);
     }
 

@@ -35,9 +35,6 @@ public class Company {
     private String domain;
 
     @Column(nullable = false)
-    private boolean enabled = false;
-
-    @Column(nullable = false)
     private String userId;
 
     @CreatedDate
@@ -55,10 +52,10 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Order> orders;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<VacationDay> vacationDays;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<WorkSchedule> workSchedules;
 
 }

@@ -17,9 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.NotActiveException;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,12 +40,63 @@ public class OrderService {
 
         LocalDateTime requestedDate = createOrderDto.getRequestedDateTime();
 
-        if(!company.isEnabled()) {
-            throw new NotEnabledException("Company is not enabled to accept orders.");
+        if(company.getWorkSchedules().isEmpty()) {
+            throw new NotEnabledException("Company has no work schedules configured.");
         }
 
-        if(isWeekend(requestedDate)) {
-            throw new InvalidOrderDateException("Orders cannot be placed on weekends.");
+        //Check if the requested date is in the past
+        if (requestedDate.isBefore(LocalDateTime.now())) {
+            throw new InvalidOrderDateException("Requested date cannot be in the past.");
+        }
+
+        //Check if the requested date is a vacation day
+        List<VacationDay> vacationDays = company.getVacationDays();
+        boolean isVacationDay = vacationDays.stream()
+                .anyMatch(vd -> vd.getDate().equals(requestedDate.toLocalDate()));
+        if (isVacationDay) {
+            throw new InvalidOrderDateException("Orders cannot be placed on vacation days.");
+        }
+
+        //Check if the requested date is a valid working day
+        DayOfWeek requestedDay = requestedDate.getDayOfWeek();
+        WorkSchedule workSchedule = company.getWorkSchedules()
+                .stream()
+                .filter(ws -> ws.getDayOfWeek() == requestedDay)
+                .findFirst()
+                .orElseThrow(() -> new InvalidOrderDateException("No work schedule found for requested day."));
+
+        LocalTime startTime = workSchedule.getStartTime();
+        LocalTime endTime = workSchedule.getEndTime();
+        LocalTime requestedTime = requestedDate.toLocalTime();
+
+        if (requestedTime.isBefore(startTime) || requestedTime.isAfter(endTime)) {
+            throw new InvalidOrderDateException("Requested time is outside of working hours.");
+        }
+
+        //Check if the max number of orders for the requested date is reached
+        LocalDate orderDate = requestedDate.toLocalDate();
+        long ordersCount = orderRepository.countByCompanyAndRequestedDateTimeBetween(
+                company,
+                orderDate.atStartOfDay(),
+                orderDate.plusDays(1).atStartOfDay()
+        );
+
+        if (ordersCount >= workSchedule.getMaxOrdersPerDay()) {
+            throw new InvalidOrderDateException("Maximum number of orders for the day reached.");
+        }
+
+        //Check the minimum minutes between orders
+        List<Order> sameDayOrders = orderRepository.findAllByCompanyAndRequestedDateTimeBetween(
+                company,
+                orderDate.atStartOfDay(),
+                orderDate.plusDays(1).atStartOfDay()
+        );
+
+        for(Order order : sameDayOrders) {
+            long minutesBetween = Math.abs(Duration.between(order.getRequestedDateTime(), requestedDate).toMinutes());
+            if(minutesBetween < workSchedule.getMinMinutesBetweenOrders()) {
+                throw new InvalidOrderDateException("There must be at least " + workSchedule.getMinMinutesBetweenOrders() + " minutes between orders.");
+            }
         }
 
         //Create customer
@@ -135,11 +184,5 @@ public class OrderService {
 
         return OrderDto.fromEntity(order);
     }
-
-    private boolean isWeekend(LocalDateTime dateTime) {
-        DayOfWeek day = dateTime.getDayOfWeek();
-        return day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY;
-    }
-
 
 }
