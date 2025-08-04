@@ -44,13 +44,14 @@ public class MailService {
             String toName,
             String subject,
             String customerName,
-            String companyName) {
+            String companyName
+    ) {
         Map<String, Object> vars = Map.of(
                 "customer_name", customerName,
                 "company_name", companyName
         );
 
-        sendTemplateMail(toEmail, toName, subject, "orderconfirmation", vars);
+        sendTemplateMail(toEmail, toName, subject, "order-confirmation", vars);
     }
 
     public void sendOrderStatusUpdate(
@@ -59,14 +60,15 @@ public class MailService {
             String subject,
             String customerName,
             String companyName,
-            OrderStatus status) {
+            OrderStatus status
+    ) {
         Map<String, Object> vars = Map.of(
                 "customer_name", customerName,
                 "company_name", companyName,
                 "order_status", translateOrderStatus(status)
         );
 
-        sendTemplateMail(toEmail, toName, subject, "OrderStatusUpdate", vars);
+        sendTemplateMail(toEmail, toName, subject, "order-status-update", vars);
     }
 
     public void sendInvoicePaymentRequest(
@@ -75,13 +77,47 @@ public class MailService {
             String subject,
             String customerName,
             String companyName,
-            String paymentLink) {
+            String paymentLink
+    ) {
         Map<String, Object> vars = Map.of(
                 "customer_name", customerName,
                 "company_name", companyName,
-                "payment_link", paymentLink);
+                "payment_link", paymentLink
+        );
 
-        sendTemplateMail(toEmail, toName, subject, "InvoicePaymentRequest", vars);
+        sendTemplateMail(toEmail, toName, subject, "invoice-payment-request", vars);
+    }
+
+    public void sendInvoicePaymentSuccess(
+            String toEmail,
+            String toName,
+            String subject,
+            String customerName,
+            String companyName,
+            String resourceLink
+    ) {
+        Map<String, Object> vars = Map.of(
+                "customer_name", customerName,
+                "company_name", companyName,
+                "resource_link", resourceLink
+        );
+
+        sendTemplateMail(toEmail, toName, subject, "invoice-payment-success", vars);
+    }
+
+    public void sendInvoicePaymentFailure(
+            String toEmail,
+            String toName,
+            String subject,
+            String customerName,
+            String companyName
+    ) {
+        Map<String, Object> vars = Map.of(
+                "customer_name", customerName,
+                "company_name", companyName
+        );
+
+        sendTemplateMail(toEmail, toName, subject, "invoice-payment-failure", vars);
     }
 
     private String translateOrderStatus(OrderStatus status) {

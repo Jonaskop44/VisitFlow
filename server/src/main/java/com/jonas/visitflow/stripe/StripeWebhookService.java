@@ -76,14 +76,56 @@ public class StripeWebhookService {
     }
 
     public void handleAsyncPaymentSuccess(Event event) {
-        // z.B. Überweisung wurde erfolgreich abgeschlossen
-        System.out.println("✅ Async Payment succeeded");
-    }
+        var sessionOpt = event.getDataObjectDeserializer().getObject().filter(obj -> obj instanceof Session).map(obj -> (Session)obj);
+
+        if (sessionOpt.isEmpty()) {
+            System.err.println("Event data is not a checkout.session");
+            return;
+        }
+
+        Session session = sessionOpt.get();
+        String sessionId = session.getId();
+
+        Invoice invoice = invoiceRepository.findByStripeSessionId(sessionId)
+                .orElseThrow(() -> new NotFoundException("No invoice found for session ID: " + sessionId));
+
+        invoice.setStatus(InvoiceStatus.PAID);
+        invoice.setPaidAt(LocalDateTime.now());
+        invoice.setStripePaymentId(session.getPaymentIntent());
+        invoiceRepository.save(invoice);
+
+        String email = invoice.getOrder().getCustomer().getEmail();
+        String name = invoice.getOrder().getCustomer().getFirstName() + " " + invoice.getOrder().getCustomer().getLastName();
+        String company = invoice.getOrder().getCompany().getName();
+
+        String priceId = invoice.getOrder().getProduct().getStripePriceId();
+        successUrl = successUrl + "/" + invoice.getToken();
+
+        mailService.sendInvoicePaymentSuccess(email, name, "Payment successful", name, company, successUrl);
+     }
 
     public void handleAsyncPaymentFailure(Event event) {
-        // z.B. Überweisung ist fehlgeschlagen
-        System.out.println("❌ Async Payment failed");
-        // Optional: Mail an Kunde mit Hinweis
+        var sessionOpt = event.getDataObjectDeserializer().getObject().filter(obj -> obj instanceof Session).map(obj -> (Session)obj);
+
+        if (sessionOpt.isEmpty()) {
+            System.err.println("Event data is not a checkout.session");
+            return;
+        }
+
+        Session session = sessionOpt.get();
+        String sessionId = session.getId();
+
+        Invoice invoice = invoiceRepository.findByStripeSessionId(sessionId)
+                .orElseThrow(() -> new NotFoundException("No invoice found for session ID: " + sessionId));
+
+        invoice.setStatus(InvoiceStatus.FAILED);
+        invoiceRepository.save(invoice);
+
+        String email = invoice.getOrder().getCustomer().getEmail();
+        String name = invoice.getOrder().getCustomer().getFirstName() + " " + invoice.getOrder().getCustomer().getLastName();
+        String company = invoice.getOrder().getCompany().getName();
+
+        mailService.sendInvoicePaymentFailure(email, name, "Payment failed", name, company);
     }
 
     public void handleCheckoutSessionExpired(Event event) {

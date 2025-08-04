@@ -15,6 +15,7 @@ public class CompanyDto {
     private String name;
     private String description;
     private String domain;
+    private boolean enabled;
     private String userId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -26,6 +27,7 @@ public class CompanyDto {
                 .name(company.getName())
                 .description(company.getDescription())
                 .domain(company.getDomain())
+                .enabled(company.isEnabled())
                 .userId(company.getUserId())
                 .createdAt(company.getCreatedAt())
                 .updatedAt(company.getUpdatedAt())

@@ -1,5 +1,7 @@
 package com.jonas.visitflow.order;
 
+import com.jonas.visitflow.exception.InvalidOrderDateException;
+import com.jonas.visitflow.exception.NotEnabledException;
 import com.jonas.visitflow.exception.NotFoundException;
 import com.jonas.visitflow.mail.MailService;
 import com.jonas.visitflow.model.*;
@@ -14,6 +16,8 @@ import com.jonas.visitflow.order.dto.OrderDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.NotActiveException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,6 +39,16 @@ public class OrderService {
 
         Product product = productRepository.findById(createOrderDto.getProductId())
                 .orElseThrow(() -> new NotFoundException("Product not found"));
+
+        LocalDateTime requestedDate = createOrderDto.getRequestedDateTime();
+
+        if(!company.isEnabled()) {
+            throw new NotEnabledException("Company is not enabled to accept orders.");
+        }
+
+        if(isWeekend(requestedDate)) {
+            throw new InvalidOrderDateException("Orders cannot be placed on weekends.");
+        }
 
         //Create customer
         Customer customer = Customer.builder()
@@ -121,5 +135,11 @@ public class OrderService {
 
         return OrderDto.fromEntity(order);
     }
+
+    private boolean isWeekend(LocalDateTime dateTime) {
+        DayOfWeek day = dateTime.getDayOfWeek();
+        return day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY;
+    }
+
 
 }
