@@ -16,16 +16,12 @@ import java.util.Map;
 public class MailService {
 
     private final MailgunMessagesApi mailgunMessagesApi;
+    private final MailgunConfig mailgunConfig;
 
-    @Value("${mailgun.domain}")
-    private String domain;
-
-    @Value("${mailgun.from}")
-    private String fromEmail;
 
     private void sendTemplateMail(String toEmail, String toName, String subject, String templateName, Map<String, Object> variables) {
         Message message = Message.builder()
-                .from(fromEmail)
+                .from(mailgunConfig.getFromEmail())
                 .to(EmailUtil.nameWithEmail(toName, toEmail))
                 .subject(subject)
                 .template(templateName)
@@ -33,7 +29,7 @@ public class MailService {
                 .build();
 
         try {
-            mailgunMessagesApi.sendMessage(domain, message);
+            mailgunMessagesApi.sendMessage(mailgunConfig.getDomain(), message);
         } catch (FeignException e) {
             throw new RuntimeException("Failed to send email: " + e.getMessage(), e);
         }
