@@ -1,4 +1,6 @@
 import { Address } from "./address.types";
+import { Customer } from "./customer.types";
+import { Product } from "./product.types";
 
 enum OrderStatus {
   REQUESTED,
@@ -14,4 +16,6 @@ export interface Order {
   createdAt: Date;
   updatedAt: Date;
   address: Address;
+  customer: Customer;
+  product: Product;
 }
