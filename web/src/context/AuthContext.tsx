@@ -1,3 +1,6 @@
+"use client";
+
+import Loader from "@/components/Common/Loader";
 import keycloak from "@/lib/keycloak";
 import { createContext, FC, useEffect, useState } from "react";
 
@@ -41,6 +44,10 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     keycloak.logout();
     setToken(null);
   };
+
+  if (!initialized) {
+    return <Loader />;
+  }
 
   return (
     <AuthContext.Provider value={{ token, initialized, logout }}>
