@@ -1,6 +1,7 @@
 package com.jonas.visitflow.company.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,8 +23,8 @@ public class CreateCompanyDto {
     @NotBlank(message = "City is required")
     private String city;
 
-    @NotBlank(message = "Postal code is required")
-    private String postalCode;
+    @NotNull(message = "Postal code is required")
+    private Integer postalCode;
 
     @NotBlank(message = "Country is required")
     private String country;

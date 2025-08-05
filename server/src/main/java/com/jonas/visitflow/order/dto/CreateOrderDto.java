@@ -42,8 +42,8 @@ public class CreateOrderDto {
     @NotBlank(message = "City is required")
     private String city;
 
-    @NotBlank(message = "Postal code is required")
-    private String postalCode;
+    @NotNull(message = "Postal code is required")
+    private Integer postalCode;
 
     @NotBlank(message = "Country is required")
     private String country;

@@ -12,7 +12,7 @@ public class AddressDto {
     private Long id;
     private String street;
     private String city;
-    private String postalCode;
+    private Integer postalCode;
     private String country;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

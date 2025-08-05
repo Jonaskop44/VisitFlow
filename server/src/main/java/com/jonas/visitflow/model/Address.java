@@ -29,7 +29,7 @@ public final class Address {
     private String city;
 
     @Column(nullable = false)
-    private String postalCode;
+    private Integer postalCode;
 
     @Column(nullable = false)
     private String country;
