@@ -1,4 +1,5 @@
 import { Address } from "./address.types";
+import { Product } from "./product.types";
 
 export interface Company {
   id: string;
@@ -9,4 +10,5 @@ export interface Company {
   createdAt: Date;
   updatedAt: Date;
   address: Address;
+  products: Product[];
 }

@@ -2,10 +2,12 @@ package com.jonas.visitflow.company.dto;
 
 import com.jonas.visitflow.address.dto.AddressDto;
 import com.jonas.visitflow.model.Company;
+import com.jonas.visitflow.product.dto.ProductDto;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -19,6 +21,7 @@ public class CompanyDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private AddressDto address;
+    private List<ProductDto> products;
 
     public static CompanyDto fromEntity(Company company) {
         return CompanyDto.builder()
@@ -30,6 +33,9 @@ public class CompanyDto {
                 .createdAt(company.getCreatedAt())
                 .updatedAt(company.getUpdatedAt())
                 .address(AddressDto.fromEntity(company.getAddress()))
+                .products(company.getProducts() != null
+                        ? company.getProducts().stream().map(ProductDto::fromEntity).toList()
+                        : List.of())
                 .build();
     }
 

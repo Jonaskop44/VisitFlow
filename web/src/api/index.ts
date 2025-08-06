@@ -7,6 +7,7 @@ import { Pdf } from "./pdf";
 import { Product } from "./product";
 import { VacationDay } from "./vacationday";
 import { WorkSchedule } from "./workschedule";
+import { useUserStore } from "@/data/user-store";
 
 export default class ApiClient {
   company: Company;

@@ -1,23 +1,24 @@
+import { OrderFormData } from "@/lib/order-validation";
 import { Order } from "@/types/order.types";
 import axios from "axios";
 
 export class Helper {
   constructor() {}
 
-  async createOrder(order: Order, companyId: string) {
-    axios
+  async createOrder(order: OrderFormData, companyId: string) {
+    return axios
       .post(`/order/${companyId}/submit`, {
-        firstName: order.customer.firstName,
-        lastName: order.customer.lastName,
-        email: order.customer.email,
-        phoneNumber: order.customer.phoneNumber,
+        firstName: order.firstName,
+        lastName: order.lastName,
+        email: order.email,
+        phoneNumber: order.phoneNumber,
         requestedDateTime: order.requestedDateTime,
         note: order.note,
-        street: order.address.street,
-        productId: order.product.id,
-        city: order.address.city,
-        postalCode: order.address.postalCode,
-        country: order.address.country,
+        street: order.street,
+        productId: order.productId,
+        city: order.city,
+        postalCode: order.postalCode,
+        country: order.country,
       })
       .then((response) => {
         if (response.status !== 200) return { data: null, status: false };
@@ -31,7 +32,7 @@ export class Helper {
   }
 
   async updateOrderStatus(order: Order) {
-    axios
+    return axios
       .patch(`order/${order.id}/update`, {
         status: order.status,
       })

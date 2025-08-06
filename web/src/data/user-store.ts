@@ -26,6 +26,7 @@ export const useUserStore = create<UserState>((set) => ({
       const token = keycloak.token || null;
       const username = keycloak.tokenParsed?.preferred_username || null;
       set({ token, username, initialized: true });
+      
     } else {
       set({ initialized: true });
     }
