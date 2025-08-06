@@ -46,6 +46,36 @@ export class Helper {
       });
   }
 
-  
+  async getAllOrders(companyId: string, startDate?: Date, endDate?: Date) {
+    if (!startDate || !endDate) {
+      return axios
+        .get(`order/${companyId}/all`)
+        .then((response) => {
+          if (response.status !== 200) return { data: null, status: false };
 
+          const data = response.data;
+          return { data: data, status: true };
+        })
+        .catch(() => {
+          return { data: null, status: false };
+        });
+    } else {
+      return axios
+        .get(`order/${companyId}/all`, {
+          params: {
+            start: startDate.toISOString(),
+            end: endDate.toISOString(),
+          },
+        })
+        .then((response) => {
+          if (response.status !== 200) return { data: null, status: false };
+
+          const data = response.data;
+          return { data: data, status: true };
+        })
+        .catch(() => {
+          return { data: null, status: false };
+        });
+    }
+  }
 }
