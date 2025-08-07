@@ -21,7 +21,6 @@ public class CompanyDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private AddressDto address;
-    private List<ProductDto> products;
 
     public static CompanyDto fromEntity(Company company) {
         return CompanyDto.builder()
@@ -33,9 +32,6 @@ public class CompanyDto {
                 .createdAt(company.getCreatedAt())
                 .updatedAt(company.getUpdatedAt())
                 .address(AddressDto.fromEntity(company.getAddress()))
-                .products(company.getProducts() != null
-                        ? company.getProducts().stream().map(ProductDto::fromEntity).toList()
-                        : List.of())
                 .build();
     }
 

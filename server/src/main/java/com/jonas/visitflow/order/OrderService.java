@@ -13,7 +13,9 @@ import com.jonas.visitflow.repository.ProductRepository;
 import com.jonas.visitflow.repository.OrderRepository;
 import com.jonas.visitflow.order.dto.CreateOrderDto;
 import com.jonas.visitflow.order.dto.OrderDto;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.io.NotActiveException;
@@ -31,6 +33,7 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final MailService mailService;
 
+    @Transactional
     public OrderDto createOrder(CreateOrderDto createOrderDto, UUID id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Company not found"));
@@ -39,6 +42,9 @@ public class OrderService {
                 .orElseThrow(() -> new NotFoundException("Product not found"));
 
         LocalDateTime requestedDate = createOrderDto.getRequestedDateTime();
+
+        Hibernate.initialize(company.getWorkSchedules());
+        Hibernate.initialize(company.getVacationDays());
 
         if(company.getWorkSchedules().isEmpty()) {
             throw new NotEnabledException("Company has no work schedules configured.");

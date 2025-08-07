@@ -1,5 +1,6 @@
 package com.jonas.visitflow.company;
 
+import com.jonas.visitflow.company.dto.CompanyDetailsDto;
 import com.jonas.visitflow.company.dto.CompanyDto;
 import com.jonas.visitflow.company.dto.CreateCompanyDto;
 import jakarta.validation.Valid;
@@ -47,8 +48,8 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}/info")
-    public ResponseEntity<CompanyDto> getCompanyInfo(@PathVariable UUID id) {
-        CompanyDto companyDto = companyService.getCompanyInfo(id);
+    public ResponseEntity<CompanyDetailsDto> getCompanyInfo(@PathVariable UUID id) {
+        CompanyDetailsDto companyDto = companyService.getCompanyInfo(id);
         return ResponseEntity.ok(companyDto);
     }
 

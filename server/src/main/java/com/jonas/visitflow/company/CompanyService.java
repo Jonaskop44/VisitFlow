@@ -1,5 +1,6 @@
 package com.jonas.visitflow.company;
 
+import com.jonas.visitflow.company.dto.CompanyDetailsDto;
 import com.jonas.visitflow.company.dto.CompanyDto;
 import com.jonas.visitflow.company.dto.CreateCompanyDto;
 import com.jonas.visitflow.exception.AlreadyExistsException;
@@ -8,7 +9,9 @@ import com.jonas.visitflow.exception.UnauthorizedException;
 import com.jonas.visitflow.model.Address;
 import com.jonas.visitflow.model.Company;
 import com.jonas.visitflow.repository.CompanyRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -81,10 +84,13 @@ public class CompanyService {
         return CompanyDto.fromEntity(company);
     }
 
-    public CompanyDto getCompanyInfo(UUID id) {
+    @Transactional
+    public CompanyDetailsDto getCompanyInfo(UUID id) {
         Company company = companyRepository.findById(id).orElseThrow(() -> new NotFoundException("Company not found"));
 
-        return CompanyDto.fromEntity(company);
+        Hibernate.initialize(company.getProducts());
+
+        return CompanyDetailsDto.fromEntity(company);
     }
 
     public List<CompanyDto> getAllCompanies(String userId) {
