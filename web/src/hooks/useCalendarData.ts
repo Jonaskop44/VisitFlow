@@ -50,7 +50,16 @@ export const useCalendarData = (availabilityData: AvailabilityData) => {
     () =>
       availabilityData.orders.map((order) => {
         const start = dayjs(order.requestedDateTime);
-        const end = start.add(order.product.duration, "minute");
+
+        const dayOfWeek = start.day();
+        const schedule = availabilityData.workSchedules.find(
+          (ws) => dayOfWeekMap[ws.dayOfWeek] === dayOfWeek
+        );
+
+        const minGap = schedule?.minMinutesBetweenOrders || 0;
+        const end = start
+          .add(order.product.duration, "minute")
+          .add(minGap, "minute");
 
         return {
           title: order.product.name,
