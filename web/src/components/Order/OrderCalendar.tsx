@@ -11,8 +11,14 @@ interface OrderCalendarProps {
 }
 
 const OrderCalendar: FC<OrderCalendarProps> = ({ availabilityData }) => {
-  const { minStartTime, maxEndTime, weekendsEnabled, businessHours, orders } =
-    useCalendarData(availabilityData);
+  const {
+    minStartTime,
+    maxEndTime,
+    weekendsEnabled,
+    businessHours,
+    orders,
+    selectAllow,
+  } = useCalendarData(availabilityData);
 
   return (
     <div className="p-4 bg-white rounded shadow">
@@ -29,6 +35,7 @@ const OrderCalendar: FC<OrderCalendarProps> = ({ availabilityData }) => {
         slotMaxTime={maxEndTime}
         businessHours={businessHours}
         events={orders}
+        selectAllow={selectAllow}
         height="auto"
       />
     </div>
