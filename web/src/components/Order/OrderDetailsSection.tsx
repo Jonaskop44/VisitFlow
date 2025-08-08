@@ -1,21 +1,18 @@
 import { OrderFormData } from "@/lib/order-validation";
 import { Product } from "@/types/product.types";
-import { DatePicker, Select, SelectItem, Textarea } from "@heroui/react";
+import { Select, SelectItem, Textarea } from "@heroui/react";
 import { motion } from "framer-motion";
 import { FC } from "react";
-import {
-  UseFormRegister,
-  FieldErrors,
-  Control,
-  Controller,
-} from "react-hook-form";
-import { now, getLocalTimeZone, parseDateTime } from "@internationalized/date";
+import { UseFormRegister, FieldErrors, Control } from "react-hook-form";
+import OrderCalendar from "./OrderCalendar";
+import { AvailabilityData } from "@/types/availabilityData.types";
 
 interface OrderDetailsSectionProps {
   register: UseFormRegister<OrderFormData>;
   control: Control<OrderFormData>;
   errors: FieldErrors<OrderFormData>;
   products: Product[];
+  availabilityData: AvailabilityData;
 }
 
 const OrderDetailsSection: FC<OrderDetailsSectionProps> = ({
@@ -23,6 +20,7 @@ const OrderDetailsSection: FC<OrderDetailsSectionProps> = ({
   control,
   errors,
   products,
+  availabilityData,
 }) => {
   return (
     <motion.div
@@ -41,28 +39,7 @@ const OrderDetailsSection: FC<OrderDetailsSectionProps> = ({
           </Select>
         </div>
         {/* Use Controller for DatePicker to handle value and onChange */}
-        <Controller
-          name="requestedDateTime"
-          control={control}
-          rules={{ required: "Bitte wählen Sie ein Datum aus." }}
-          render={({ field }) => (
-            <DatePicker
-              value={
-                typeof field.value === "string"
-                  ? parseDateTime(field.value)
-                  : field.value
-              }
-              hideTimeZone
-              showMonthAndYearPickers
-              isRequired
-              isInvalid={!!errors.requestedDateTime}
-              errorMessage={errors.requestedDateTime?.message}
-              variant="bordered"
-              label="Gewünschter Termin"
-              ref={field.ref}
-            />
-          )}
-        />
+        <OrderCalendar availabilityData={availabilityData} />
 
         <Textarea
           {...register("note")}

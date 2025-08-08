@@ -76,8 +76,9 @@ public class WorkScheduleService {
             throw new UnauthorizedException("You are not authorized to update this work schedule");
         }
 
-        //Check if a work schedule already exists for the same day of the week
-        if (workScheduleRepository.existsByCompanyAndDayOfWeek(workSchedule.getCompany(), workScheduleDto.getDayOfWeek())) {
+        boolean existsForSameDay = workScheduleRepository.existsByCompanyAndDayOfWeek(workSchedule.getCompany(), workSchedule.getDayOfWeek());
+
+        if(existsForSameDay && !workSchedule.getDayOfWeek().equals(workScheduleDto.getDayOfWeek())) {
             throw new AlreadyExistsException("A work schedule already exists for this day of the week");
         }
 

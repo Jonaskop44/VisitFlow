@@ -15,6 +15,8 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { Icon } from "@iconify/react";
+import { AvailabilityData } from "@/types/availabilityData.types";
 
 const apiClient = new ApiClient();
 
@@ -22,6 +24,11 @@ const CreateOrderPage = () => {
   const params = useParams();
   const companyId = params.id as string;
   const [company, setCompany] = useState<Company | null>(null);
+  const [availabilityData, setAvailabilityData] = useState<AvailabilityData>({
+    orders: [],
+    vacationDays: [],
+    workSchedules: [],
+  });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
@@ -38,6 +45,11 @@ const CreateOrderPage = () => {
     apiClient.company.helper.getCompanyInfo(companyId).then((response) => {
       if (response.status) {
         setCompany(response.data);
+        setAvailabilityData({
+          orders: response.data.orders,
+          vacationDays: response.data.vacationDays,
+          workSchedules: response.data.workSchedules,
+        });
       }
     });
   }, [companyId]);
@@ -63,6 +75,40 @@ const CreateOrderPage = () => {
     });
   };
 
+  if (isSubmitted) {
+    return (
+      <div className="min-h-screen bg-neutral-page flex items-center justify-center p-4">
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.5, type: "spring" }}
+        >
+          <Card className="w-full max-w-md">
+            <CardBody className="text-center p-8">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+              >
+                <Icon
+                  icon="mdi:check-circle"
+                  className="w-16 h-16 text-green-500 mx-auto mb-4"
+                />
+              </motion.div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                Erfolgreich gesendet!
+              </h2>
+              <p className="text-gray-600">
+                Ihre Buchungsanfrage wurde erfolgreich an {company.name}{" "}
+                übermittelt.
+              </p>
+            </CardBody>
+          </Card>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-neutral-page py-8 px-4">
       <div className="max-w-4xl mx-auto">
@@ -77,7 +123,11 @@ const CreateOrderPage = () => {
                 <h1 className="text-3xl font-bold text-gray-800 mb-2">
                   Service Buchung
                 </h1>
-                <p className="text-gray-600">{company.description}</p>
+                <p className="text-gray-600 font-semibold">{company.name}</p>
+                <p className="text-gray-500">{company.address.street}</p>
+                <p className="text-gray-500">
+                  {company.address.postalCode} {company.address.city}
+                </p>
               </div>
             </CardHeader>
             <CardBody>
@@ -90,6 +140,7 @@ const CreateOrderPage = () => {
                   control={control}
                   errors={errors}
                   products={company.products}
+                  availabilityData={availabilityData}
                 />
 
                 <motion.div
