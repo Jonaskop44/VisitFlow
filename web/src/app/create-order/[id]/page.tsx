@@ -71,6 +71,10 @@ const CreateOrderPage = () => {
         setIsSubmitting(false);
         if (response.data.message.includes("past")) {
           toast.error("Das ausgewählte Datum liegt in der Vergangenheit.");
+        } else if (response.data.message.includes("be at least")) {
+          toast.error(
+            "Der Zeitraum zwischen den Buchungen ist zu kurz. Bitte wählen Sie einen größeren Zeitabstand."
+          );
         } else {
           toast.error(
             "Fehler beim Senden der Buchung. Überprüfen Sie Ihre Eingaben und versuchen Sie es erneut."

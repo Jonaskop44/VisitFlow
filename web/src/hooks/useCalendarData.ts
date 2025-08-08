@@ -49,21 +49,22 @@ export const useCalendarData = (availabilityData: AvailabilityData) => {
   const orders = useMemo(
     () =>
       availabilityData.orders.map((order) => {
-        const start = dayjs(order.requestedDateTime);
-
-        const dayOfWeek = start.day();
+        const originalStart = dayjs(order.requestedDateTime);
+        const dayOfWeek = dayjs(order.requestedDateTime).day();
         const schedule = availabilityData.workSchedules.find(
           (ws) => dayOfWeekMap[ws.dayOfWeek] === dayOfWeek
         );
 
         const minGap = schedule?.minMinutesBetweenOrders || 0;
-        const end = start
+
+        const displayStart = originalStart.subtract(minGap, "minute");
+        const end = originalStart
           .add(order.product.duration, "minute")
           .add(minGap, "minute");
 
         return {
           title: order.product.name,
-          start: start.toISOString(),
+          start: displayStart.toISOString(),
           end: end.toISOString(),
           backgroundColor: "#f87171", //red
           borderColor: "#f87171",
