@@ -37,6 +37,7 @@ const CreateOrderPage = () => {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<OrderFormData>({
     resolver: zodResolver(orderSchema),
   });
@@ -68,9 +69,13 @@ const CreateOrderPage = () => {
         reset();
       } else {
         setIsSubmitting(false);
-        toast.error(
-          "Fehler beim Senden der Buchung. Bitte versuchen Sie es später erneut."
-        );
+        if (response.data.message.includes("past")) {
+          toast.error("Das ausgewählte Datum liegt in der Vergangenheit.");
+        } else {
+          toast.error(
+            "Fehler beim Senden der Buchung. Überprüfen Sie Ihre Eingaben und versuchen Sie es erneut."
+          );
+        }
       }
     });
   };
@@ -141,6 +146,7 @@ const CreateOrderPage = () => {
                   errors={errors}
                   products={company.products}
                   availabilityData={availabilityData}
+                  setValue={setValue}
                 />
 
                 <motion.div

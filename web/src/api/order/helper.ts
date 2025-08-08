@@ -26,8 +26,13 @@ export class Helper {
         const data = response.data;
         return { data: data, status: true };
       })
-      .catch(() => {
-        return { data: null, status: false };
+      .catch((error) => {
+        return {
+          data: {
+            message: error.response.data.message,
+          },
+          status: false,
+        };
       });
   }
 

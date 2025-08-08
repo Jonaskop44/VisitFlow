@@ -9,12 +9,14 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class TrimmedProductDto {
+    private Long id;
     private String name;
     private BigDecimal price;
     private Long duration;
 
     public static TrimmedProductDto fromEntity(Product product) {
         return TrimmedProductDto.builder()
+                .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
                 .duration(product.getDuration())

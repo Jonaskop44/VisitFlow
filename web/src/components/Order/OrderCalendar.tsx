@@ -5,12 +5,17 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { AvailabilityData } from "@/types/availabilityData.types";
 import { FC } from "react";
 import { useCalendarData } from "@/hooks/useCalendarData";
+import dayjs from "dayjs";
 
 interface OrderCalendarProps {
   availabilityData: AvailabilityData;
+  onDateSelect?: (startDateISO: string) => void;
 }
 
-const OrderCalendar: FC<OrderCalendarProps> = ({ availabilityData }) => {
+const OrderCalendar: FC<OrderCalendarProps> = ({
+  availabilityData,
+  onDateSelect,
+}) => {
   const {
     minStartTime,
     maxEndTime,
@@ -21,7 +26,7 @@ const OrderCalendar: FC<OrderCalendarProps> = ({ availabilityData }) => {
   } = useCalendarData(availabilityData);
 
   return (
-    <div className="p-4 bg-white rounded shadow">
+    <div>
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
@@ -36,6 +41,14 @@ const OrderCalendar: FC<OrderCalendarProps> = ({ availabilityData }) => {
         businessHours={businessHours}
         events={events}
         selectAllow={selectAllow}
+        select={(selectInfo) => {
+          if (onDateSelect) {
+            const localISOString = dayjs(selectInfo.start).format(
+              "YYYY-MM-DDTHH:mm:ss"
+            );
+            onDateSelect(localISOString);
+          }
+        }}
         height="auto"
       />
     </div>

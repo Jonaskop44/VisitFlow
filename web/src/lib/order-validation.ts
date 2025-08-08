@@ -15,7 +15,7 @@ export const orderSchema = z.object({
   city: z.string().min(2, "Stadt muss mindestens 2 Zeichen haben"),
   postalCode: z.number().min(3, "Postleitzahl muss mindestens 3 Zeichen haben"),
   country: z.string().min(2, "Land muss mindestens 2 Zeichen haben"),
-  productId: z.number().min(1, "Bitte wählen Sie ein Produkt aus"),
+  productId: z.number("Bitte wählen Sie ein Produkt aus"),
 });
 
 export type OrderFormData = z.infer<typeof orderSchema>;
