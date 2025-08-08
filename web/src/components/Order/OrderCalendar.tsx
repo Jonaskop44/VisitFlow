@@ -16,7 +16,7 @@ const OrderCalendar: FC<OrderCalendarProps> = ({ availabilityData }) => {
     maxEndTime,
     weekendsEnabled,
     businessHours,
-    orders,
+    events,
     selectAllow,
   } = useCalendarData(availabilityData);
 
@@ -34,7 +34,7 @@ const OrderCalendar: FC<OrderCalendarProps> = ({ availabilityData }) => {
         slotMinTime={minStartTime}
         slotMaxTime={maxEndTime}
         businessHours={businessHours}
-        events={orders}
+        events={events}
         selectAllow={selectAllow}
         height="auto"
       />

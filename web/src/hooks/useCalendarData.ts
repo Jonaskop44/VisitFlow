@@ -65,7 +65,7 @@ export const useCalendarData = (availabilityData: AvailabilityData) => {
           title: order.product.name,
           start: start.toISOString(),
           end: end.toISOString(),
-          backgroundColor: "#f87171",
+          backgroundColor: "#f87171", //red
           borderColor: "#f87171",
         };
       }),
@@ -78,6 +78,17 @@ export const useCalendarData = (availabilityData: AvailabilityData) => {
         dayjs(vac.date).format("YYYY-MM-DD")
       )
     );
+  }, [availabilityData]);
+
+  const vacationEvents = useMemo(() => {
+    return availabilityData.vacationDays.map((vac) => ({
+      title: "Urlaub",
+      start: dayjs(vac.date).format("YYYY-MM-DD"),
+      allDay: true,
+      display: "background",
+      backgroundColor: "#f87171", //red
+      borderColor: "#f87171",
+    }));
   }, [availabilityData]);
 
   const selectAllow = useCallback(
@@ -126,11 +137,16 @@ export const useCalendarData = (availabilityData: AvailabilityData) => {
     [availabilityData.workSchedules, orders, vacationDaysSet]
   );
 
+  const events = useMemo(
+    () => [...orders, ...vacationEvents],
+    [orders, vacationEvents]
+  );
+
   return {
     ...minMaxTimes,
     weekendsEnabled,
     businessHours,
-    orders,
+    events,
     selectAllow,
   };
 };
