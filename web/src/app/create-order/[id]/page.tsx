@@ -86,13 +86,13 @@ const CreateOrderPage = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-neutral-page flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.5, type: "spring" }}
         >
-          <Card className="w-full max-w-md">
+          <Card className="w-full max-w-md shadow-2xl border-1 border-gray-300">
             <CardBody className="text-center p-8">
               <motion.div
                 initial={{ scale: 0 }}
@@ -119,14 +119,14 @@ const CreateOrderPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-page py-8 px-4">
+    <div className="min-h-screen py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <Card className="w-full">
+          <Card className="shadow-2xl border-1 border-gray-300">
             <CardHeader className="pb-6">
               <div className="text-center w-full">
                 <h1 className="text-3xl font-bold text-gray-800 mb-2">
